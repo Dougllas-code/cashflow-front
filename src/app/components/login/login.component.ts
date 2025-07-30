@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { AuthenticationService } from '../../core/services/authetication.service';
 import { Router } from '@angular/router';
 import { LoginResponse } from '../../shared/models/responses/loginResponse';
+import { NotificationService } from '../../shared/components/notification/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -27,6 +28,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private readonly authService: AuthenticationService,
+    private readonly notificationService: NotificationService,
     private readonly router: Router
   ) { }
 
@@ -41,9 +43,10 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.loginForm.value).subscribe({
       next: (response: LoginResponse) => {
         this.router.navigate(['/home']);
+        this.notificationService.create('Login successful');
       },
       error: (error) => {
-        // Handle login error here
+        this.notificationService.create('Login failed');
       }
     });
   }
