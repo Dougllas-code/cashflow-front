@@ -1,3 +1,4 @@
+import { CurrencyInputComponent } from '../../../../shared/components/currency-input/currency-input.component';
 import { Component, inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,8 +24,9 @@ import { MatButtonModule } from '@angular/material/button';
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
-    MatButtonModule
-],
+    MatButtonModule,
+    CurrencyInputComponent
+  ],
   templateUrl: './create-edit-expense.component.html',
   styleUrl: './create-edit-expense.component.scss',
   providers: [
@@ -66,6 +68,8 @@ export class CreateEditExpenseComponent implements OnInit {
   addExpense(): void {
 
   }
+
+  // Permite apenas números, vírgula e ponto
 
   onCancel(): void {
     this.dialogRef.close();

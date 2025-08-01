@@ -23,10 +23,12 @@
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
 
-      <mat-form-field class="half-width">
-        <mat-label>Valor</mat-label>
-        <input matInput formControlName="amount" type="number" />
-      </mat-form-field>
+      <app-currency-input 
+        class="half-width"
+        formControlName="amount" 
+        label="Valor" 
+        [required]="true">
+      </app-currency-input>
     </div>
 
     <mat-form-field class="full-width">
