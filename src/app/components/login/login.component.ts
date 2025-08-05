@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -29,13 +29,14 @@ export class LoginComponent implements OnInit {
   constructor(
     private readonly authService: AuthenticationService,
     private readonly notificationService: NotificationService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly formBuilder: FormBuilder
   ) { }
 
   ngOnInit(): void {
-    this.loginForm = new FormGroup({
-      email: new FormControl(null, [Validators.required]),
-      password: new FormControl(null, [Validators.required])
+    this.loginForm = this.formBuilder.group({
+      email: [null, [Validators.required]],
+      password: [null, [Validators.required]]
     });
   }
 
