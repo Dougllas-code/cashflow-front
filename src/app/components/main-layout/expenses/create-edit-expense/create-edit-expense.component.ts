@@ -13,6 +13,10 @@ import { MatNativeDateModule, provideNativeDateAdapter, MAT_DATE_LOCALE } from '
 import { PAYMENT_TYPE_OPTIONS } from '../../../../core/constants/paymentTypeOptions';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { ExpensesService } from '../../../../core/services/expenses/expenses.service';
+import { UTC_DATE_PROVIDER } from '../../../../core/constants/utcDateProvider';
+import { ExpenseShortResponse } from '../../../../shared/models/responses/expenseShortResponse';
+import { NotificationService } from '../../../../shared/components/notification/notification.service';
 
 @Component({
   selector: 'app-create-edit-expense',
@@ -35,7 +39,6 @@ import { MatButtonModule } from '@angular/material/button';
   ]
 })
 export class CreateEditExpenseComponent implements OnInit {
-  
 
   data = inject<ActionDialog>(MAT_DIALOG_DATA);
   expenseForm!: FormGroup<ExpenseForm>;
@@ -44,7 +47,9 @@ export class CreateEditExpenseComponent implements OnInit {
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    public dialogRef: MatDialogRef<CreateEditExpenseComponent>
+    public dialogRef: MatDialogRef<CreateEditExpenseComponent>,
+    public readonly expensesService: ExpensesService,
+    private readonly notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -57,19 +62,25 @@ export class CreateEditExpenseComponent implements OnInit {
 
   private createExpenseForm(): FormGroup<ExpenseForm> {
     return this.formBuilder.group<ExpenseForm>({
-      title: this.formBuilder.control<string | null>(null, [Validators.required, StringValidators.notBlankValidator]),
-      description: this.formBuilder.control<string | null>(null),
-      date: this.formBuilder.control<Date | null>(null, Validators.required),
-      amount: this.formBuilder.control<number | null>(null, Validators.required),
-      paymentType: this.formBuilder.control<PaymentType | null>(null, Validators.required)
+      title: this.formBuilder.control<string>('', { validators: [Validators.required, StringValidators.notBlankValidator], nonNullable: true }),
+      description: this.formBuilder.control<string>('', { nonNullable: true }),
+      date: this.formBuilder.control<Date>(UTC_DATE_PROVIDER.getTodayDate(), { validators: [Validators.required], nonNullable: true }),
+      amount: this.formBuilder.control<number>(0, { validators: [Validators.required], nonNullable: true }),
+      paymentType: this.formBuilder.control<PaymentType>(PaymentType.Cash, { validators: [Validators.required], nonNullable: true })
     });
   }
 
   addExpense(): void {
-
+    this.expensesService.createExpense(this.expenseForm.getRawValue()).subscribe({
+      next: (response: ExpenseShortResponse) => {
+        this.dialogRef.close(response);
+        this.notificationService.create(`Expense (${response.title}) created successfully`);
+      },
+      error: (error) => {
+        this.notificationService.create('Failed to create expense');
+      }
+    });
   }
-
-  // Permite apenas números, vírgula e ponto
 
   onCancel(): void {
     this.dialogRef.close();

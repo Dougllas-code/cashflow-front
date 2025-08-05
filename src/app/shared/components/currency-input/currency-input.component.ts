@@ -1,9 +1,10 @@
+import { Component, Input, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { ControlValueAccessor, ReactiveFormsModule } from '@angular/forms';
+import { ControlValueAccessor, ReactiveFormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgxMaskDirective } from 'ngx-mask';
+
 
 @Component({
   selector: 'app-currency-input',
@@ -15,6 +16,13 @@ import { NgxMaskDirective } from 'ngx-mask';
     MatFormFieldModule,
     MatInputModule,
     NgxMaskDirective
+  ],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => CurrencyInputComponent),
+      multi: true
+    }
   ]
 })
 export class CurrencyInputComponent implements ControlValueAccessor {

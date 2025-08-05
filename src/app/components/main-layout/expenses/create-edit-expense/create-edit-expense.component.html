@@ -18,7 +18,6 @@
       <mat-form-field class="half-width">
         <mat-label>Data</mat-label>
         <input matInput [matDatepicker]="picker" formControlName="date" />
-        <mat-hint>MM/DD/YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
@@ -44,6 +43,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-stroked-button color="warn" (click)="onCancel()">Descartar</button>
-  <button mat-flat-button color="primary" (click)="addExpense()">Adicionar Despesa</button>
+  <button mat-stroked-button (click)="onCancel()">Descartar</button>
+  <button mat-flat-button (click)="addExpense()" [disabled]="!expenseForm.valid">Adicionar Despesa</button>
 </mat-dialog-actions>
