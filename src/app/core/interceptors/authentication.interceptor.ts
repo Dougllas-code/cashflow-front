@@ -14,7 +14,6 @@ export class AuthenticationInterceptor implements HttpInterceptor {
   constructor(private readonly authenticationService: AuthenticationService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    debugger
     const token = this.authenticationService.getToken();
     let authReq = req;
     if (token) {
