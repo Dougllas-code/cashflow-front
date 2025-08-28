@@ -1,0 +1,48 @@
+<h2 mat-dialog-title>{{data}} Despesa</h2>
+
+<mat-dialog-content>
+
+
+  <form [formGroup]="expenseForm">
+    <mat-form-field class="full-width">
+      <mat-label>Título</mat-label>
+      <input matInput formControlName="title" />
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Descrição</mat-label>
+      <input matInput formControlName="description" />
+    </mat-form-field>
+
+    <div class="row-half">
+      <mat-form-field class="half-width">
+        <mat-label>Data</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <app-currency-input 
+        class="half-width"
+        formControlName="amount" 
+        label="Valor" 
+        [required]="true">
+      </app-currency-input>
+    </div>
+
+    <mat-form-field class="full-width">
+      <mat-label>Tipo de Pagamento</mat-label>
+      <mat-select formControlName="paymentType">
+        @for (paymentType of paymentTypeOptions; track paymentType) {
+          <mat-option [value]="paymentType.value">{{paymentType.label}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-stroked-button (click)="onCancel()">Descartar</button>
+  <button mat-flat-button (click)="addExpense()" [disabled]="!expenseForm.valid">Adicionar Despesa</button>
+</mat-dialog-actions>
