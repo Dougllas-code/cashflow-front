@@ -14,7 +14,7 @@ import { PAYMENT_TYPE_OPTIONS } from '../../../../core/constants/paymentTypeOpti
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { ExpensesService } from '../../../../core/services/expenses/expenses.service';
-import { UTC_DATE_PROVIDER } from '../../../../core/constants/utcDateProvider';
+import { DATE_PROVIDER } from '../../../../core/constants/dateProvider';
 import { ExpenseShortResponse } from '../../../../shared/models/responses/expenseShortResponse';
 import { NotificationService } from '../../../../shared/components/notification/notification.service';
 
@@ -64,7 +64,7 @@ export class CreateEditExpenseComponent implements OnInit {
     return this.formBuilder.group<ExpenseForm>({
       title: this.formBuilder.control<string>('', { validators: [Validators.required, StringValidators.notBlankValidator], nonNullable: true }),
       description: this.formBuilder.control<string>('', { nonNullable: true }),
-      date: this.formBuilder.control<Date>(UTC_DATE_PROVIDER.getTodayDate(), { validators: [Validators.required], nonNullable: true }),
+      date: this.formBuilder.control<Date>(DATE_PROVIDER.getTodayDate(), { validators: [Validators.required], nonNullable: true }),
       amount: this.formBuilder.control<number>(0, { validators: [Validators.required], nonNullable: true }),
       paymentType: this.formBuilder.control<PaymentType>(PaymentType.Cash, { validators: [Validators.required], nonNullable: true })
     });
