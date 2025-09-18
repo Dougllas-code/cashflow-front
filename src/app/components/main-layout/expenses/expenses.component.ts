@@ -19,7 +19,8 @@ export class ExpensesComponent {
 
   openCreateExpenseModal() {
     this.dialog.open(CreateEditExpenseComponent, {
-      data: ActionDialog.ADD
+      data: ActionDialog.ADD,
+      disableClose: true
     });
   }
 }
