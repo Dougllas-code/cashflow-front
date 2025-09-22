@@ -14,4 +14,8 @@ export class ExpensesService {
   createExpense(request: ExpenseRequest): Observable<ExpenseShortResponse> {
     return this.http.post<ExpenseShortResponse>(`${environment.apiUrl}/Expenses`, request);
   }
+
+  updateExpense(id: number, request: ExpenseRequest): Observable<void> {
+    return this.http.put<void>(`${environment.apiUrl}/Expenses/${id}`, request);
+  }
 }
