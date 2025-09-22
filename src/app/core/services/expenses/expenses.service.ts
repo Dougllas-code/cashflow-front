@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ExpenseRequest } from '../../../shared/models/requests/expenseRequest';
 import { Observable } from 'rxjs';
-import { ExpenseShortResponse } from '../../../shared/models/responses/expenseShortResponse';
+import { RegisterExpenseShortResponse } from '../../../shared/models/responses/resgisterExpenseShortResponse';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { ExpenseShortResponse } from '../../../shared/models/responses/expenseShortResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,12 @@ import { environment } from '../../../../environments/environment';
 export class ExpensesService {
   constructor(private readonly http: HttpClient) { }
 
-  createExpense(request: ExpenseRequest): Observable<ExpenseShortResponse> {
-    return this.http.post<ExpenseShortResponse>(`${environment.apiUrl}/Expenses`, request);
+  getAllExpenses(): Observable<ExpenseShortResponse> {
+    return this.http.get<ExpenseShortResponse>(`${environment.apiUrl}/Expenses`);
+  }
+
+  createExpense(request: ExpenseRequest): Observable<RegisterExpenseShortResponse> {
+    return this.http.post<RegisterExpenseShortResponse>(`${environment.apiUrl}/Expenses`, request);
   }
 
   updateExpense(id: number, request: ExpenseRequest): Observable<void> {
