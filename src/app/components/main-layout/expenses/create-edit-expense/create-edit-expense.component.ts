@@ -14,11 +14,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { ExpensesService } from '../../../../core/services/expenses/expenses.service';
 import { DATE_PROVIDER } from '../../../../core/constants/dateProvider';
-import { ExpenseShortResponse } from '../../../../shared/models/responses/expenseShortResponse';
 import { NotificationService } from '../../../../shared/components/notification/notification.service';
 import { CreateEditExpenseDialogData } from '../../../../shared/models/dialogs-data/create-edit-expense';
 import { Expense } from '../../../../shared/entities/expense';
 import { ActionDialog } from '../../../../core/enums/actionDialog';
+import { RegisterExpenseShortResponse } from '../../../../shared/models/responses/resgisterExpenseShortResponse';
 
 @Component({
   selector: 'app-create-edit-expense',
@@ -102,7 +102,7 @@ export class CreateEditExpenseComponent implements OnInit {
 
   private addExpense(): void {
     this.expensesService.createExpense(this.expenseForm.getRawValue()).subscribe({
-      next: (response: ExpenseShortResponse) => {
+      next: (response: RegisterExpenseShortResponse) => {
         this.dialogRef.close(response);
         this.notificationService.create(`Expense (${response.title}) created successfully`);
       },

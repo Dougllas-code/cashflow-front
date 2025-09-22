@@ -6,11 +6,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { CreateEditExpenseComponent } from './create-edit-expense/create-edit-expense.component';
 import { ActionDialog } from '../../../core/enums/actionDialog';
 import { CreateEditExpenseDialogData } from '../../../shared/models/dialogs-data/create-edit-expense';
+import { ListExpensesComponent } from './list-expenses/list-expenses.component';
 
 @Component({
   selector: 'app-expenses',
   standalone: true,
-  imports: [CommonModule, BreadcrumbComponent, MatButtonModule],
+  imports: [CommonModule, BreadcrumbComponent, MatButtonModule, ListExpensesComponent],
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.scss']
 })
