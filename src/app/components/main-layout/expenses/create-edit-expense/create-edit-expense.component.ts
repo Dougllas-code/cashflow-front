@@ -19,6 +19,9 @@ import { CreateEditExpenseDialogData } from '../../../../shared/models/dialogs-d
 import { Expense } from '../../../../shared/entities/expense';
 import { ActionDialog } from '../../../../core/enums/actionDialog';
 import { RegisterExpenseShortResponse } from '../../../../shared/models/responses/resgisterExpenseShortResponse';
+import { StateExpense } from '../../../../shared/models/stateService/expenseStateService';
+import { ExpenseStateService } from '../../../../core/services/expenses/expense-state.service';
+import { StateActions } from '../../../../core/enums/stateActions';
 
 @Component({
   selector: 'app-create-edit-expense',
@@ -52,7 +55,8 @@ export class CreateEditExpenseComponent implements OnInit {
     private readonly formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<CreateEditExpenseComponent>,
     public readonly expensesService: ExpensesService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly expenseStateService: ExpenseStateService
   ) { }
 
   ngOnInit(): void {
@@ -104,6 +108,8 @@ export class CreateEditExpenseComponent implements OnInit {
     this.expensesService.createExpense(this.expenseForm.getRawValue()).subscribe({
       next: (response: RegisterExpenseShortResponse) => {
         this.dialogRef.close(response);
+
+        this.expenseStateService.notifyExpensesComponents({ action: StateActions.ADDED } as StateExpense);
         this.notificationService.create(`Expense (${response.title}) created successfully`);
       },
       error: (error) => {
@@ -116,6 +122,8 @@ export class CreateEditExpenseComponent implements OnInit {
     this.expensesService.updateExpense(this.data.expense!.id, this.expenseForm.getRawValue()).subscribe({
       next: () => {
         this.dialogRef.close(true);
+
+        this.expenseStateService.notifyExpensesComponents({ action: StateActions.EDITED } as StateExpense);
         this.notificationService.create(`Expense (${this.expenseForm.value.title}) updated successfully`);
       },
       error: (error) => {

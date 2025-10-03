@@ -1,9 +1,8 @@
 import { Component, Input, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, ReactiveFormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, ReactiveFormsModule, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { NgxMaskDirective } from 'ngx-mask';
 
 
 @Component({
@@ -13,9 +12,9 @@ import { NgxMaskDirective } from 'ngx-mask';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    NgxMaskDirective
   ],
   providers: [
     {
@@ -30,17 +29,35 @@ export class CurrencyInputComponent implements ControlValueAccessor {
   @Input() placeholder = '';
   @Input() required = false;
 
-  value: string = '';
+    value: string = '';
+    private rawValue: number | null = null;
   disabled = false;
+
+  onFocus(): void {
+    // Clears the field if the value is 0 or 0.00
+    if (
+      this.value === '0,00' ||
+      this.value === '0.00' ||
+      this.value === '0' ||
+      this.value === '0,0' ||
+      this.value === '0.0'
+    ) {
+      this.value = '';
+      this.rawValue = null;
+      this.onChange(null);
+    }
+  }
 
   onChange = (value: number | null) => { };
   onTouched = () => { };
 
   writeValue(value: number | null): void {
     if (value !== null && value !== undefined) {
-      this.value = this.formatValue(value);
+        this.rawValue = value;
+        this.value = this.formatValue(value);
     } else {
-      this.value = '';
+        this.rawValue = null;
+        this.value = '';
     }
   }
 
@@ -58,16 +75,17 @@ export class CurrencyInputComponent implements ControlValueAccessor {
 
   onInput(event: Event): void {
     let input = (event.target as HTMLInputElement).value;
-    this.value = input;
-    this.onChange(this.parseValue(input));
+      const parsed = this.parseValue(input);
+      this.rawValue = parsed;
+      this.value = input;
+      this.onChange(parsed);
   }
 
   onBlur(): void {
-    const parsed = this.parseValue(this.value);
-    if (parsed !== null) {
-      this.value = this.formatValue(parsed);
-    }
-    this.onTouched();
+      if (this.rawValue !== null) {
+        this.value = this.formatValue(this.rawValue);
+      }
+      this.onTouched();
   }
 
   private parseValue(value: string): number | null {
@@ -78,6 +96,6 @@ export class CurrencyInputComponent implements ControlValueAccessor {
   }
 
   private formatValue(value: number): string {
-    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 }

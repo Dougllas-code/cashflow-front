@@ -5,6 +5,7 @@ import { RegisterExpenseShortResponse } from '../../../shared/models/responses/r
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { ExpenseShortResponse } from '../../../shared/models/responses/expenseShortResponse';
+import { Expense } from '../../../shared/entities/expense';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,10 @@ export class ExpensesService {
 
   getAllExpenses(): Observable<ExpenseShortResponse> {
     return this.http.get<ExpenseShortResponse>(`${environment.apiUrl}/Expenses`);
+  }
+  
+  getExpenseById(id: number): Observable<Expense> {
+    return this.http.get<Expense>(`${environment.apiUrl}/Expenses/${id}`);
   }
 
   createExpense(request: ExpenseRequest): Observable<RegisterExpenseShortResponse> {
