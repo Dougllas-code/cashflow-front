@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{data}} Despesa</h2>
+<h2 mat-dialog-title>{{data.action}} Despesa</h2>
 
 <mat-dialog-content>
 
@@ -44,5 +44,5 @@
 
 <mat-dialog-actions>
   <button mat-stroked-button (click)="onCancel()">Descartar</button>
-  <button mat-flat-button (click)="addExpense()" [disabled]="!expenseForm.valid">Adicionar Despesa</button>
+  <button mat-flat-button (click)="submit()" [disabled]="!expenseForm.valid">Salvar</button>
 </mat-dialog-actions>

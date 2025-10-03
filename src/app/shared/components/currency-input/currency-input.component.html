@@ -1,13 +1,11 @@
 <mat-form-field class="full-width">
   <mat-label>{{ label }}</mat-label>
   <input matInput
-         [placeholder]="placeholder"
-         [required]="required"
-         [disabled]="disabled"
-         [value]="value"
-         mask="separator.2"
-         thousandSeparator="."
-         decimalMarker="," 
-         (input)="onInput($event)"
-         (blur)="onBlur()" />
+    [placeholder]="placeholder"
+    [required]="required"
+    [disabled]="disabled"
+    [(ngModel)]="value"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    (focus)="onFocus()" />
 </mat-form-field>

@@ -2,7 +2,6 @@ import { CurrencyInputComponent } from '../../../../shared/components/currency-i
 import { Component, inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { ActionDialog } from '../../../../core/enums/actionDialog';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { StringValidators } from '../../../../core/validators/stringValidators';
 import { ExpenseForm } from '../../../../core/types/ExpenseForm';
@@ -15,8 +14,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { ExpensesService } from '../../../../core/services/expenses/expenses.service';
 import { DATE_PROVIDER } from '../../../../core/constants/dateProvider';
-import { ExpenseShortResponse } from '../../../../shared/models/responses/expenseShortResponse';
 import { NotificationService } from '../../../../shared/components/notification/notification.service';
+import { CreateEditExpenseDialogData } from '../../../../shared/models/dialogs-data/create-edit-expense';
+import { Expense } from '../../../../shared/entities/expense';
+import { ActionDialog } from '../../../../core/enums/actionDialog';
+import { RegisterExpenseShortResponse } from '../../../../shared/models/responses/resgisterExpenseShortResponse';
+import { StateExpense } from '../../../../shared/models/stateService/expenseStateService';
+import { ExpenseStateService } from '../../../../core/services/expenses/expense-state.service';
+import { StateActions } from '../../../../core/enums/stateActions';
 
 @Component({
   selector: 'app-create-edit-expense',
@@ -40,46 +45,91 @@ import { NotificationService } from '../../../../shared/components/notification/
 })
 export class CreateEditExpenseComponent implements OnInit {
 
-  data = inject<ActionDialog>(MAT_DIALOG_DATA);
+  data = inject<CreateEditExpenseDialogData>(MAT_DIALOG_DATA);
+  readonly dialog = inject(MatDialog);
+
   expenseForm!: FormGroup<ExpenseForm>;
   paymentTypeOptions = PAYMENT_TYPE_OPTIONS;
-  readonly dialog = inject(MatDialog);
 
   constructor(
     private readonly formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<CreateEditExpenseComponent>,
     public readonly expensesService: ExpensesService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly expenseStateService: ExpenseStateService
   ) { }
 
   ngOnInit(): void {
-    this.expenseForm = this.createExpenseForm();
+    this.expenseForm = this.createExpenseForm(this.data.expense);
 
     this.dialogRef.afterClosed().subscribe(() => {
       this.expenseForm.reset();
     });
   }
 
-  private createExpenseForm(): FormGroup<ExpenseForm> {
+  private createExpenseForm(expense: Expense | null): FormGroup<ExpenseForm> {
     return this.formBuilder.group<ExpenseForm>({
-      title: this.formBuilder.control<string>('', { validators: [Validators.required, StringValidators.notBlankValidator], nonNullable: true }),
-      description: this.formBuilder.control<string>('', { nonNullable: true }),
-      date: this.formBuilder.control<Date>(DATE_PROVIDER.getTodayDate(), { validators: [Validators.required], nonNullable: true }),
-      amount: this.formBuilder.control<number>(0, { validators: [Validators.required], nonNullable: true }),
-      paymentType: this.formBuilder.control<PaymentType>(PaymentType.Cash, { validators: [Validators.required], nonNullable: true })
+      title: this.formBuilder.control<string>(
+        expense ? expense.title : '',
+        {
+          validators:
+            [Validators.required, StringValidators.notBlankValidator],
+          nonNullable: true
+        }
+      ),
+      description: this.formBuilder.control<string>(
+        expense ? expense.description : '',
+        { nonNullable: true }
+      ),
+      date: this.formBuilder.control<Date>(
+        expense ? expense.date : DATE_PROVIDER.getTodayDate(),
+        { validators: [Validators.required], nonNullable: true }
+      ),
+      amount: this.formBuilder.control<number>(
+        expense ? expense.amount : 0,
+        { validators: [Validators.required], nonNullable: true }
+      ),
+      paymentType: this.formBuilder.control<PaymentType>(
+        expense ? expense.paymentType : PaymentType.Cash,
+        { validators: [Validators.required], nonNullable: true }
+      )
     });
   }
 
-  addExpense(): void {
+  submit(): void {
+    if (this.data.action === ActionDialog.ADD) {
+      this.addExpense();
+    } else {
+      this.updateExpense();
+    }
+  }
+
+  private addExpense(): void {
     this.expensesService.createExpense(this.expenseForm.getRawValue()).subscribe({
-      next: (response: ExpenseShortResponse) => {
+      next: (response: RegisterExpenseShortResponse) => {
         this.dialogRef.close(response);
+
+        this.expenseStateService.notifyExpensesComponents({ action: StateActions.ADDED } as StateExpense);
         this.notificationService.create(`Expense (${response.title}) created successfully`);
       },
       error: (error) => {
         this.notificationService.create('Failed to create expense');
       }
     });
+  }
+
+  private updateExpense(): void {
+    this.expensesService.updateExpense(this.data.expense!.id, this.expenseForm.getRawValue()).subscribe({
+      next: () => {
+        this.dialogRef.close(true);
+
+        this.expenseStateService.notifyExpensesComponents({ action: StateActions.EDITED } as StateExpense);
+        this.notificationService.create(`Expense (${this.expenseForm.value.title}) updated successfully`);
+      },
+      error: (error) => {
+        this.notificationService.create('Failed to update expense');
+      }
+    })
   }
 
   onCancel(): void {
