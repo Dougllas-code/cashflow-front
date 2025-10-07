@@ -1,0 +1,85 @@
+<div class="register-container">
+  <mat-card class="gray-bg">
+    <mat-card-title>Criar Conta</mat-card-title>
+    <form [formGroup]="registerForm">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Nome</mat-label>
+        <input matInput type="text" formControlName="name" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" required>
+      </mat-form-field>
+
+      <div class="password-row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Senha</mat-label>
+          <input matInput type="password" formControlName="password" required
+                 (focus)="onPasswordFocus()" 
+                 (blur)="onPasswordBlur()">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Confirmar Senha</mat-label>
+          <input matInput type="password" formControlName="confirmPassword" required>
+          <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch')">
+            As senhas não coincidem
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Password requirements -->
+      <div class="password-requirements" *ngIf="showPasswordRules">
+        <div class="requirement" [class.valid]="passwordRules.minLength">
+          <mat-icon [class.valid-icon]="passwordRules.minLength">
+            {{ passwordRules.minLength ? 'check_circle' : 'cancel' }}
+          </mat-icon>
+          <span>Mínimo de 8 caracteres</span>
+        </div>
+        
+        <div class="requirement" [class.valid]="passwordRules.hasUppercase">
+          <mat-icon [class.valid-icon]="passwordRules.hasUppercase">
+            {{ passwordRules.hasUppercase ? 'check_circle' : 'cancel' }}
+          </mat-icon>
+          <span>Pelo menos uma letra maiúscula (A-Z)</span>
+        </div>
+        
+        <div class="requirement" [class.valid]="passwordRules.hasLowercase">
+          <mat-icon [class.valid-icon]="passwordRules.hasLowercase">
+            {{ passwordRules.hasLowercase ? 'check_circle' : 'cancel' }}
+          </mat-icon>
+          <span>Pelo menos uma letra minúscula (a-z)</span>
+        </div>
+        
+        <div class="requirement" [class.valid]="passwordRules.hasNumber">
+          <mat-icon [class.valid-icon]="passwordRules.hasNumber">
+            {{ passwordRules.hasNumber ? 'check_circle' : 'cancel' }}
+          </mat-icon>
+          <span>Pelo menos um número (0-9)</span>
+        </div>
+        
+        <div class="requirement" [class.valid]="passwordRules.hasSpecialChar">
+          <mat-icon [class.valid-icon]="passwordRules.hasSpecialChar">
+            {{ passwordRules.hasSpecialChar ? 'check_circle' : 'cancel' }}
+          </mat-icon>
+          <span>Pelo menos um caractere especial (!?*.)</span>
+        </div>
+      </div>
+
+      <button 
+        mat-raised-button 
+        color="primary" 
+        class="full-width" 
+        (click)="register()"
+        [disabled]="registerForm.invalid"
+        >
+        Criar Conta
+      </button>
+    </form>
+
+    <div class="links">
+      <p>Já possui uma conta? <a routerLink="/login">Fazer login</a></p>
+    </div>
+  </mat-card>
+</div>

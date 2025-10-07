@@ -5,7 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { AuthenticationService } from '../../core/services/authetication.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { LoginResponse } from '../../shared/models/responses/loginResponse';
 import { NotificationService } from '../../shared/components/notification/notification.service';
 
@@ -17,7 +17,8 @@ import { NotificationService } from '../../shared/components/notification/notifi
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    RouterModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
