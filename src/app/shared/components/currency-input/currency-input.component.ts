@@ -73,12 +73,66 @@ export class CurrencyInputComponent implements ControlValueAccessor {
     this.disabled = isDisabled;
   }
 
+  onKeyDown(event: KeyboardEvent): void {
+    // Allow control keys (backspace, delete, tab, escape, enter, etc.)
+    if (
+      event.key === 'Backspace' ||
+      event.key === 'Delete' ||
+      event.key === 'Tab' ||
+      event.key === 'Escape' ||
+      event.key === 'Enter' ||
+      event.key === 'ArrowLeft' ||
+      event.key === 'ArrowRight' ||
+      event.key === 'ArrowUp' ||
+      event.key === 'ArrowDown' ||
+      event.key === 'Home' ||
+      event.key === 'End' ||
+      (event.ctrlKey && (event.key === 'a' || event.key === 'c' || event.key === 'v' || event.key === 'x'))
+    ) {
+      return;
+    }
+
+    // Allow only numbers, comma and dot
+    if (!/[\d,.]/.test(event.key)) {
+      event.preventDefault();
+      return;
+    }
+
+    const currentValue = (event.target as HTMLInputElement).value;
+    
+    // Allow only one comma or dot
+    if ((event.key === ',' || event.key === '.') && (currentValue.includes(',') || currentValue.includes('.'))) {
+      event.preventDefault();
+    }
+  }
+
   onInput(event: Event): void {
     let input = (event.target as HTMLInputElement).value;
-      const parsed = this.parseValue(input);
-      this.rawValue = parsed;
-      this.value = input;
-      this.onChange(parsed);
+    
+    // Filter only valid characters (numbers, comma and dot)
+    input = input.replace(/[^\d,.-]/g, '');
+    
+    // Ensure only one comma or decimal dot
+    const commaCount = (input.match(/,/g) || []).length;
+    const dotCount = (input.match(/\./g) || []).length;
+    
+    if (commaCount > 1) {
+      input = input.replace(/,/g, (match, offset) => offset === input.lastIndexOf(',') ? match : '');
+    }
+    
+    if (dotCount > 1) {
+      input = input.replace(/\./g, (match, offset) => offset === input.lastIndexOf('.') ? match : '');
+    }
+    
+    // Update input value if it was modified
+    if ((event.target as HTMLInputElement).value !== input) {
+      (event.target as HTMLInputElement).value = input;
+    }
+    
+    const parsed = this.parseValue(input);
+    this.rawValue = parsed;
+    this.value = input;
+    this.onChange(parsed);
   }
 
   onBlur(): void {
