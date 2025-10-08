@@ -28,4 +28,8 @@ export class ExpensesService {
   updateExpense(id: number, request: ExpenseRequest): Observable<void> {
     return this.http.put<void>(`${environment.apiUrl}/Expenses/${id}`, request);
   }
+
+  deleteExpense(id: number): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/Expenses/${id}`);
+  }
 }
